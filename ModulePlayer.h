@@ -21,12 +21,11 @@ public:
 
 public:
 
-	PhysVehicle3D* vehicle;
+
 	float turn;
 	float acceleration;
 	float brake;
 	uint fx_breaks;
-	void Respawn();
 	uint lap = 0;
 	uint best_time;
 	Timer timer;

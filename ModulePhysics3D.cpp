@@ -2,7 +2,6 @@
 #include "Application.h"
 #include "ModulePhysics3D.h"
 #include "PhysBody3D.h"
-#include "PhysVehicle3D.h"
 #include "Primitive.h"
 
 #ifdef _DEBUG
@@ -119,13 +118,7 @@ update_status ModulePhysics3D::Update(float dt)
 	{
 		world->debugDrawWorld();
 
-		// Render vehicles
-		p2List_item<PhysVehicle3D*>* item = vehicles.getFirst();
-		while(item)
-		{
-			item->data->Render();
-			item = item->next;
-		}
+		
 		/*
 		if(App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
 		{
@@ -180,11 +173,6 @@ bool ModulePhysics3D::CleanUp()
 		delete item->data;
 
 	bodies.clear();
-
-	for(p2List_item<PhysVehicle3D*>* item = vehicles.getFirst(); item; item = item->next)
-		delete item->data;
-
-	vehicles.clear();
 
 	delete vehicle_raycaster;
 	delete world;
@@ -271,126 +259,6 @@ PhysBody3D* ModulePhysics3D::AddBody(const Cylinder& cylinder, float mass)
 	return pbody;
 }
 
-// ---------------------------------------------------------
-PhysVehicle3D* ModulePhysics3D::AddVehicle(const VehicleInfo& info)
-{
-	btCompoundShape* comShape = new btCompoundShape();
-	shapes.add(comShape);
-	
-	btCollisionShape* colShape = new btBoxShape(btVector3(info.chassis_size.x*0.5f, info.chassis_size.y*0.5f, info.chassis_size.z*0.5f));
-	shapes.add(colShape);
-
-	btTransform trans;
-	trans.setIdentity();
-	trans.setOrigin(btVector3(info.chassis_offset.x, info.chassis_offset.y, info.chassis_offset.z));
-
-	comShape->addChildShape(trans, colShape);
-	
-	btTransform startTransform;
-	startTransform.setIdentity();
-
-	//TESTING ---
-	// backchasis
-	btCollisionShape* colShape2 = new btBoxShape(btVector3(info.chassis_size.x - 0.9f, info.chassis_size.y, info.chassis_size.z - 1.8f));
-	shapes.add(colShape2);
-
-	btTransform trans2;
-	trans2.setIdentity();
-	trans2.setOrigin(btVector3(info.chassis_offset.x, info.chassis_offset.y - 0.2f, info.chassis_offset.z - 2.2f));
-
-	comShape->addChildShape(trans2, colShape2);
-
-	// frontchasis
-	btCollisionShape* colShape3 = new btBoxShape(btVector3(info.chassis_size.x - 0.9f, info.chassis_size.y, info.chassis_size.z - 1.8f));
-	shapes.add(colShape3);
-
-	btTransform trans3;
-	trans3.setIdentity();
-	trans3.setOrigin(btVector3(info.chassis_offset.x, info.chassis_offset.y - 0.2f, info.chassis_offset.z + 2.2f));
-
-	comShape->addChildShape(trans3, colShape3);
-
-	//leftchasis
-	btCollisionShape* colShape4 = new btBoxShape(btVector3(info.chassis_size.x - 1.90f, info.chassis_size.y, info.chassis_size.z - 0.6f));
-	shapes.add(colShape4);
-
-	btTransform trans4;
-	trans4.setIdentity();
-	trans4.setOrigin(btVector3(info.chassis_offset.x + 1.7f, info.chassis_offset.y - 0.2f, info.chassis_offset.z));
-
-	comShape->addChildShape(trans4, colShape4);
-
-	//rightchasis
-	btCollisionShape* colShape5 = new btBoxShape(btVector3(info.chassis_size.x - 1.90f, info.chassis_size.y, info.chassis_size.z - 0.6f));
-	shapes.add(colShape5);
-
-	btTransform trans5;
-	trans5.setIdentity();
-	trans5.setOrigin(btVector3(info.chassis_offset.x - 1.7f, info.chassis_offset.y - 0.2f, info.chassis_offset.z));
-
-	comShape->addChildShape(trans5, colShape5);
-
-	//sitchassis
-	btCollisionShape* colShape6 = new btBoxShape(btVector3(info.chassis_size.x - 1.10f, info.chassis_size.y + 0.7f, info.chassis_size.z - 1.9f));
-	shapes.add(colShape6);
-
-	btTransform trans6;
-	trans6.setIdentity();
-	trans6.setOrigin(btVector3(info.chassis_offset.x, info.chassis_offset.y + 0.9f, info.chassis_offset.z - 1.1f));
-
-	comShape->addChildShape(trans6, colShape6);
-
-	//wheelchassis
-	btCollisionShape* colShape7 = new btBoxShape(btVector3(info.chassis_size.x - 1.5f, info.chassis_size.y - 0.1f, info.chassis_size.z - 1.6f));
-	shapes.add(colShape7);
-
-	btTransform trans7;
-	trans7.setIdentity();
-	trans7.setOrigin(btVector3(info.chassis_offset.x, info.chassis_offset.y + 0.9f, info.chassis_offset.z + 1.3f));
-
-	comShape->addChildShape(trans7, colShape7);
-
-
-	btVector3 localInertia(0, 0, 0);
-	comShape->calculateLocalInertia(info.mass, localInertia);
-
-	btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
-	btRigidBody::btRigidBodyConstructionInfo rbInfo(info.mass, myMotionState, comShape, localInertia);
-
-	btRigidBody* body = new btRigidBody(rbInfo);
-	body->setContactProcessingThreshold(BT_LARGE_FLOAT);
-	body->setActivationState(DISABLE_DEACTIVATION);
-
-	world->addRigidBody(body);
-
-	btRaycastVehicle::btVehicleTuning tuning;
-	tuning.m_frictionSlip = info.frictionSlip;
-	tuning.m_maxSuspensionForce = info.maxSuspensionForce;
-	tuning.m_maxSuspensionTravelCm = info.maxSuspensionTravelCm;
-	tuning.m_suspensionCompression = info.suspensionCompression;
-	tuning.m_suspensionDamping = info.suspensionDamping;
-	tuning.m_suspensionStiffness = info.suspensionStiffness;
-
-	btRaycastVehicle* vehicle = new btRaycastVehicle(tuning, body, vehicle_raycaster);
-
-	vehicle->setCoordinateSystem(0, 1, 2);
-
-	for(int i = 0; i < info.num_wheels; ++i)
-	{
-		btVector3 conn(info.wheels[i].connection.x, info.wheels[i].connection.y, info.wheels[i].connection.z);
-		btVector3 dir(info.wheels[i].direction.x, info.wheels[i].direction.y, info.wheels[i].direction.z);
-		btVector3 axis(info.wheels[i].axis.x, info.wheels[i].axis.y, info.wheels[i].axis.z);
-
-		vehicle->addWheel(conn, dir, axis, info.wheels[i].suspensionRestLength, info.wheels[i].radius, tuning, info.wheels[i].front);
-	}
-	// ---------------------
-
-	PhysVehicle3D* pvehicle = new PhysVehicle3D(body, vehicle, info);
-	world->addVehicle(vehicle);
-	vehicles.add(pvehicle);
-
-	return pvehicle;
-}
 
 // ---------------------------------------------------------
 void ModulePhysics3D::AddConstraintP2P(PhysBody3D& bodyA, PhysBody3D& bodyB, const vec3& anchorA, const vec3& anchorB)

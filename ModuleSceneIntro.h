@@ -23,8 +23,6 @@ public:
 
 public:
 	Cube ground;
-	p2List<Cube> circuit;
-	PhysBody3D* flsensor;
-	PhysBody3D* midsensor;
+
 	uint fx_hit;
 };
