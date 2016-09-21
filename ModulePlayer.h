@@ -2,11 +2,6 @@
 #include "Module.h"
 #include "Globals.h"
 
-struct PhysVehicle3D;
-
-#define MAX_ACCELERATION 3000.0f
-#define TURN_DEGREES 17.0f * DEGTORAD
-#define BRAKE_POWER 1500.0f
 
 class ModulePlayer : public Module
 {
@@ -20,6 +15,4 @@ public:
 
 public:
 
-
-	Timer timer;
 };
