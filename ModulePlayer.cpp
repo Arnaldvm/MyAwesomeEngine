@@ -5,9 +5,7 @@
 #include "PhysBody3D.h"
 
 ModulePlayer::ModulePlayer(Application* app, bool start_enabled) : Module(app, start_enabled)
-{
-	turn = acceleration = brake = 0.0f;
-}
+{}
 
 ModulePlayer::~ModulePlayer()
 {}
@@ -16,8 +14,6 @@ ModulePlayer::~ModulePlayer()
 bool ModulePlayer::Start()
 {
 	LOG("Loading player");
-
-	timer.Start();
 
 	return true;
 }

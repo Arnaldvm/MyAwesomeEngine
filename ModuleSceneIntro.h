@@ -23,5 +23,6 @@ public:
 
 public:
 	
+
 	uint fx_hit;
 };

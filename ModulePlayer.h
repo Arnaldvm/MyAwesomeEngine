@@ -1,7 +1,6 @@
 #pragma once
 #include "Module.h"
 #include "Globals.h"
-#include "p2Point.h"
 
 struct PhysVehicle3D;
 
@@ -22,12 +21,5 @@ public:
 public:
 
 
-	float turn;
-	float acceleration;
-	float brake;
-	uint fx_breaks;
-	uint lap = 0;
-	uint best_time;
 	Timer timer;
-	bool check = false;
 };
