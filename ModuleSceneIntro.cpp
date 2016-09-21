@@ -16,12 +16,9 @@ bool ModuleSceneIntro::Start()
 {
 	LOG("Loading Intro assets");
 	bool ret = true;
-	App->renderer3D->Enable();
-	App->camera->Enable();
-	App->physics->Enable();
+	
 	App->camera->Move(vec3(1.0f, 1.0f, 0.0f));
 	App->camera->LookAt(vec3(0, 0, 0));
-
 
 	return ret;
 }
@@ -37,12 +34,6 @@ bool ModuleSceneIntro::CleanUp()
 // Update
 update_status ModuleSceneIntro::Update(float dt)
 {
-	ground.Render();
-
-	//sensor->GetTransform(&s.transform);
-	//s.Render();
-	//c.Render();
-
 
 	return UPDATE_CONTINUE;
 }
