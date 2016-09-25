@@ -1,6 +1,5 @@
 #pragma once
 #include "Module.h"
-#include "p2DynArray.h"
 #include "Globals.h"
 #include "Primitive.h"
 
@@ -23,6 +22,4 @@ public:
 
 public:
 	
-
-	uint fx_hit;
 };

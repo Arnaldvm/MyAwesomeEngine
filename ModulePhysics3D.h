@@ -1,7 +1,6 @@
 #pragma once
 #include "Module.h"
 #include "Globals.h"
-#include "p2List.h"
 #include "Primitive.h"
 
 #include "Bullet/include/btBulletDynamicsCommon.h"
@@ -33,7 +32,7 @@ public:
 	void AddConstraintP2P(PhysBody3D& bodyA, PhysBody3D& bodyB, const vec3& anchorA, const vec3& anchorB);
 	void AddConstraintHinge(PhysBody3D& bodyA, PhysBody3D& bodyB, const vec3& anchorA, const vec3& anchorB, const vec3& axisS, const vec3& axisB, bool disable_collision = false);
 
-	p2List<btCollisionShape*> shapes;
+	std::list<btCollisionShape*> shapes;
 
 private:
 
@@ -48,9 +47,9 @@ private:
 	DebugDrawer*						debug_draw;
 
 	
-	p2List<PhysBody3D*> bodies;
-	p2List<btDefaultMotionState*> motions;
-	p2List<btTypedConstraint*> constraints;
+	std::list<PhysBody3D*> bodies;
+	std::list<btDefaultMotionState*> motions;
+	std::list<btTypedConstraint*> constraints;
 };
 
 class DebugDrawer : public btIDebugDraw
